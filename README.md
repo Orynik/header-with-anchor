@@ -75,8 +75,8 @@ All properties are optional.
 | placeholder  | `string`   | header's placeholder string      |
 | levels       | `number[]` | enabled heading levels           |
 | defaultLevel | `number`   | default heading level            |
-| allowAnchor  | `boolean`  | Anchor enabling (default - true) |
-| anchorLength  | `number`  | Anchor length (default - 50)     |
+| allowAnchor  | `boolean`  | Anchor enabling (default: `true`) |
+| anchorLength  | `number`  | Anchor length (default: `50`)     |
 
 ```javascript
 var editor = EditorJS({
