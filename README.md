@@ -46,6 +46,8 @@ var editor = EditorJS({
 });
 ```
 
+P.S. The anchor value is displayed next to the header block only when there is text in the header block.
+
 ## Shortcut
 
 You can insert this Block by a useful shortcut. Set it up with the `tools[].shortcut` property of the Editor's initial config.
