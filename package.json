@@ -1,5 +1,5 @@
 {
-  "name": "@editorjs/header",
+  "name": "editorjs-header-with-anchor",
   "version": "2.5.0",
   "keywords": [
     "codex editor",
@@ -8,17 +8,17 @@
     "editor.js",
     "editorjs"
   ],
-  "description": "Header Tool for Editor.js",
+  "description": "Header Tool with anchor for Editor.js",
   "license": "MIT",
-  "repository": "https://github.com/editor-js/header",
+  "repository": "https://github.com/Aleksst95/header",
   "main": "./dist/bundle.js",
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development --watch"
   },
   "author": {
-    "name": "CodeX",
-    "email": "team@codex.so"
+    "name": "aleks_st",
+    "email": "aleks_st.95@mail.ru"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",

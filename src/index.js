@@ -8,6 +8,7 @@ require('./index.css').toString();
  * @description Tool's input and output data format
  * @property {string} text — Header's content
  * @property {number} level - Header's level from 1 to 6
+ * @property {string} anchor - Header's anchor
  */
 
 /**
@@ -15,16 +16,15 @@ require('./index.css').toString();
  * @description Tool's config from Editor
  * @property {string} placeholder — Block's placeholder
  * @property {number[]} levels — Heading levels
- * @property {number} defaultLevel — default level
+ * @property {number} defaultLevel — Default level
+ * @property {boolean} allowAnchor — Enable anchor block output
+ * @property {number} anchorLength — Anchor's length
  */
 
 /**
  * Header block for the Editor.js.
  *
- * @author CodeX (team@ifmo.su)
- * @copyright CodeX 2018
  * @license MIT
- * @version 2.0.0
  */
 class Header {
   /**
@@ -35,7 +35,7 @@ class Header {
    *   config - user config for Tool
    *   api - Editor.js API
    */
-  constructor({ data, config, api }) {
+  constructor({data, config, api}) {
     this.api = api;
 
     /**
@@ -48,6 +48,10 @@ class Header {
       settingsButton: this.api.styles.settingsButton,
       settingsButtonActive: this.api.styles.settingsButtonActive,
       wrapper: 'ce-header',
+      settingsWrapper: 'cdx-settings-wrapper',
+      settingsItem: 'cdx-settings-item',
+      settingsInput: 'cdx-settings-input',
+      blockAfterHide: 'after-hide',
     };
 
     /**
@@ -57,6 +61,15 @@ class Header {
      * @private
      */
     this._settings = config;
+
+    this._settings.allowAnchor = ('allowAnchor' in this._settings) ?
+      !!this._settings.allowAnchor :
+      Header.DEFAULT_ENABLE_ANCHOR;
+
+    if (this._settings.allowAnchor === true) {
+      this._settings.anchorLength = parseInt(this._settings.anchorLength) ||
+        Header.DEFAULT_ANCHOR_LENGTH;
+    }
 
     /**
      * Block's data
@@ -80,6 +93,14 @@ class Header {
      * @private
      */
     this._element = this.getTag();
+
+    /**
+     * Hide pseudo-element ::after to not show an empty anchor's value near with
+     * the header block.
+     */
+    if ('anchor' in this._data && this._data.anchor.length === 0) {
+      this._element.classList.add(this._CSS.blockAfterHide);
+    }
   }
 
   /**
@@ -98,6 +119,7 @@ class Header {
 
     newData.text = data.text || '';
     newData.level = parseInt(data.level) || this.defaultLevel.number;
+    newData.anchor = this._settings.allowAnchor ? (data.anchor || '') : '';
 
     return newData;
   }
@@ -119,6 +141,65 @@ class Header {
    */
   renderSettings() {
     const holder = document.createElement('DIV');
+    holder.classList.add(this._CSS.settingsWrapper);
+
+    // add holder for selectors
+    const tagsHolder = document.createElement('DIV');
+    holder.appendChild(tagsHolder);
+
+    /**
+     * Add anchor input if available
+     */
+    if (this._settings.allowAnchor === true) {
+      const settingsItemAnchor = document.createElement('DIV');
+      settingsItemAnchor.classList.add(this._CSS.settingsItem);
+      settingsItemAnchor.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 984.899 984.899"><path d="M884.75 779.899l46.1 14.301c24.899 7.699 48.899-14.4 43.1-39.9l-48.7-215.1c-5.8-25.4-36.899-35.101-56.1-17.4l-161.9 149.8c-19.2 17.7-12 49.5 13 57.3l42.2 13.1c-25.2 28.899-54.9 53.7-88.1 73.3-37.601 22.2-78.9 37.3-121.9 44.5V500.6h103.9c33.1 0 60-26.899 60-60 0-33.1-26.9-60-60-60h-103.9v-49.5c64.8-24.4 111-86.9 111-160.1 0-94.3-76.7-171-171-171s-171 76.7-171 171c0 73.2 46.2 135.8 111 160.1v49.5h-103.9c-33.1 0-60 26.9-60 60 0 33.101 26.9 60 60 60h103.9v359.2c-42.9-7.3-84.3-22.3-121.9-44.5-33.1-19.7-62.899-44.5-88.1-73.4l42.2-13.1c24.9-7.7 32.1-39.5 13-57.3l-161.9-149.7c-19.2-17.7-50.3-8-56.1 17.4l-48.7 215.199c-5.8 25.4 18.2 47.601 43.1 39.9l46.1-14.3c39.2 56.2 90.2 103.6 149.3 138.6 73.3 43.4 157.4 66.3 243 66.3s169.6-22.899 243-66.3c59.099-35.099 110.099-82.499 149.3-138.7zM543.45 170.9c0 7.8-1.8 15.2-4.9 21.9-8.199 17.2-25.8 29.1-46.1 29.1s-37.9-11.9-46.1-29.1c-3.2-6.6-4.9-14-4.9-21.9 0-28.1 22.9-51 51-51s51 22.9 51 51z"/></svg>';
+
+      const anchorInput = document.createElement('INPUT');
+      anchorInput.classList.add(this._CSS.settingsInput);
+      anchorInput.placeholder = 'Anchor';
+      anchorInput.value = this.anchor;
+
+      settingsItemAnchor.appendChild(anchorInput);
+
+      /**
+       * Append input to holder
+       */
+      holder.appendChild(settingsItemAnchor);
+
+      /**
+       * Add an event Listener to input field
+       */
+      anchorInput.addEventListener('input', (event) => {
+        // Allow only the following characters
+        let value = event.target.value.replace(/[^a-z0-9_-]/gi, ''),
+          valueLength = value.length;
+
+        // limit the length of the anchor
+        if (valueLength > this._settings.anchorLength) {
+          value = value.slice(0, this._settings.anchorLength);
+        }
+
+        // put the received value after filters in the input field
+        event.target.value = value;
+
+        // put the value in the tag data
+        this._element.dataset.anchor = value;
+
+        // save the value
+        this.data.anchor = value;
+
+        if (valueLength > 0) {
+          if (this._element.classList.contains(this._CSS.blockAfterHide)) {
+            this._element.classList.remove(this._CSS.blockAfterHide);
+          }
+        } else {
+          if (this._element.classList.contains(this._CSS.blockAfterHide) === false) {
+            this._element.classList.add(this._CSS.blockAfterHide);
+          }
+        }
+      });
+    }
 
     // do not add settings button, when only one level is configured
     if (this.levels.length <= 1) {
@@ -158,7 +239,7 @@ class Header {
       /**
        * Append settings button to holder
        */
-      holder.appendChild(selectTypeButton);
+      tagsHolder.appendChild(selectTypeButton);
 
       /**
        * Save settings buttons
@@ -178,13 +259,15 @@ class Header {
     this.data = {
       level: level,
       text: this.data.text,
+      anchor: this._settings.allowAnchor ? this.data.anchor : '',
     };
 
     /**
      * Highlight button by selected level
      */
     this.settingsButtons.forEach(button => {
-      button.classList.toggle(this._CSS.settingsButtonActive, parseInt(button.dataset.level) === level);
+      button.classList.toggle(this._CSS.settingsButtonActive,
+        parseInt(button.dataset.level) === level);
     });
   }
 
@@ -199,6 +282,7 @@ class Header {
     const newData = {
       text: this.data.text + data.text,
       level: this.data.level,
+      anchor: this._settings.allowAnchor ? this.data.anchor : '',
     };
 
     this.data = newData;
@@ -227,6 +311,7 @@ class Header {
     return {
       text: toolsContent.innerHTML,
       level: this.currentLevel.number,
+      anchor: this._settings.allowAnchor ? this.anchor : '',
     };
   }
 
@@ -247,7 +332,28 @@ class Header {
     return {
       level: false,
       text: {},
+      anchor: false,
     };
+  }
+
+  /**
+   * Get default status for enabling anchor
+   *
+   * @public
+   * @returns {boolean}
+   */
+  static get DEFAULT_ENABLE_ANCHOR() {
+    return true;
+  }
+
+  /**
+   * Default length for anchor
+   *
+   * @public
+   * @returns {Number}
+   */
+  static get DEFAULT_ANCHOR_LENGTH() {
+    return 50;
   }
 
   /**
@@ -345,7 +451,23 @@ class Header {
      */
     tag.dataset.placeholder = this.api.i18n.t(this._settings.placeholder || '');
 
+    /**
+     * Add anchor to if available
+     */
+    if (this._settings.allowAnchor === true) {
+      tag.dataset.anchor = this.anchor;
+    }
+
     return tag;
+  }
+
+  /**
+   * Get anchor
+   *
+   * @returns {String}
+   */
+  get anchor() {
+    return this._data.anchor || '';
   }
 
   /**
@@ -354,7 +476,8 @@ class Header {
    * @returns {level}
    */
   get currentLevel() {
-    let level = this.levels.find(levelItem => levelItem.number === this._data.level);
+    let level = this.levels.find(
+      levelItem => levelItem.number === this._data.level);
 
     if (!level) {
       level = this.defaultLevel;
@@ -380,7 +503,8 @@ class Header {
       if (userSpecified) {
         return userSpecified;
       } else {
-        console.warn('(ง\'̀-\'́)ง Heading Tool: the default level specified was not found in available levels');
+        console.warn(
+          '(ง\'̀-\'́)ง Heading Tool: the default level specified was not found in available levels');
       }
     }
 
@@ -439,7 +563,7 @@ class Header {
     ];
 
     return this._settings.levels ? availableLevels.filter(
-      l => this._settings.levels.includes(l.number)
+      l => this._settings.levels.includes(l.number),
     ) : availableLevels;
   }
 
@@ -482,7 +606,9 @@ class Header {
     if (this._settings.levels) {
       // Fallback to nearest level when specified not available
       level = this._settings.levels.reduce((prevLevel, currLevel) => {
-        return Math.abs(currLevel - level) < Math.abs(prevLevel - level) ? currLevel : prevLevel;
+        return Math.abs(currLevel - level) < Math.abs(prevLevel - level) ?
+          currLevel :
+          prevLevel;
       });
     }
 
