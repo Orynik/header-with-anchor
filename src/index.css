@@ -35,3 +35,45 @@
 .ce-header[contentEditable=true][data-placeholder]:empty:focus::before {
   display: none;
 }
+
+.ce-header::after {
+  display: inline-block;
+  content: "#" attr(data-anchor);
+  color: #868896;
+  position: absolute;
+  left: -7rem;
+  max-width: 6rem;
+  word-wrap: break-word;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.ce-header.after-hide::after {
+  display: none;
+}
+
+.cdx-settings-wrapper{
+  border-bottom: 1px solid #e7e9f1;
+  padding-bottom: 3px;
+}
+
+.cdx-settings-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.cdx-settings-item svg{
+  width: 1rem;
+  height: 1rem;
+
+  margin-left: 0.5rem;
+  margin-right: 1rem;
+}
+
+.cdx-settings-input{
+  width: 4rem;
+  border: 0;
+  outline: none;
+}
