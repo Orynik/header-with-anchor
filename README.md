@@ -45,6 +45,7 @@ var editor = EditorJS({
   ...
 });
 ```
+Available symbols: all Latin letters, digitals, dash, and underscore.
 
 P.S. The anchor value is displayed next to the header block only when there is text in the header block.
 
