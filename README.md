@@ -2,7 +2,7 @@
 
 ![Version of EditorJS that the plugin is compatible with](https://badgen.net/badge/Editor.js/v2.0/blue)
 
-Provides Headings Blocks with an ability to set an anchor text for the [Editor.js](https://ifmo.su/editor). Forked by [Header Tool](https://github.com/editor-js/header)
+Provides Headings Blocks with the ability to set an anchor text for the [Editor.js](https://ifmo.su/editor). Forked by [Header Tool](https://github.com/editor-js/header)
 
 ## Screenshot
 ![header-with-anchor](https://user-images.githubusercontent.com/12189769/91700694-f1998c00-eb7e-11ea-9cfe-4662924afa72.jpg)
