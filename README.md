@@ -45,7 +45,9 @@ var editor = EditorJS({
   ...
 });
 ```
-Available symbols: all Latin letters, digitals, dash, and underscore.
+Available characters: all Latin letters, digitals, dash, and underscore.
+In the 'cyrToLat' branch, you can find additional functionality: Cyrillic characters are replaced by Latin letters, 
+for example, `ш` to `sch`.
 
 P.S. The anchor value is displayed next to the header block only when there is text in the header block.
 
