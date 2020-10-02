@@ -46,8 +46,13 @@ var editor = EditorJS({
 });
 ```
 Available characters: all Latin letters, digitals, dash, and underscore.
-In the 'cyrToLat' branch, you can find additional functionality: Cyrillic characters are replaced by Latin letters, 
+
+In the `cyrToLat` branch, you can find additional functionality: Cyrillic characters are replaced by Latin letters, 
 for example, `ш` to `sch`.
+
+In the `maxLength` branch, you can find additional functionality: If you want to set the maximum length of the header text, you need to set the `checkHeaderLength` parameter to `TRUE` in the config.
+
+In the `cyrToLat_with_maxLength` branch, you can find additional features from branches `cyrToLat` and `maxLength` at the same time.
 
 P.S. The anchor value is displayed next to the header block only when there is text in the header block.
 
