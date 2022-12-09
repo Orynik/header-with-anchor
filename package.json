@@ -11,7 +11,7 @@
   "description": "Header Tool with anchor for Editor.js",
   "license": "MIT",
   "repository": "https://github.com/Aleksst95/header-with-anchor",
-  "main": "./dist/bundle.js",
+  "main": "dist/bundle.js",
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development --watch"
