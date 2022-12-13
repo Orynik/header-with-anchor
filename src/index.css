@@ -73,7 +73,12 @@
 }
 
 .cdx-settings-input{
-  width: 4rem;
+  width: 100%;
   border: 0;
   outline: none;
+}
+
+.cdx-settings-items-wrapper {
+  display: flex;
+  justify-content: space-between;
 }
